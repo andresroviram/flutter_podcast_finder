@@ -12,17 +12,15 @@ Before starting, make sure you have:
 
 - **IDE**: Android Studio, VS Code, or IntelliJ IDEA with Flutter plugins
 
-- **Devices**: 
+- **Devices**:
   - **Android**: Android Studio with emulator, or physical device
   - **iOS**: Xcode with simulator (Mac only), or physical device
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
-```bash
-git clone <repository-url>
-cd podcast_finder
-```
+### 1. Download and upload the base project to a git repository
+
+Download the project podcast\_finder.zip and upload the base project to Gitlab/Github.
 
 ### 2. Install dependencies
 ```bash
@@ -40,17 +38,11 @@ dart run build_runner build --delete-conflicting-outputs
 
 ### 4. Run the app
 
-**For Android:**
 ```bash
 flutter run
 ```
 
-**For iOS (Mac only):**
-```bash
-flutter run
-```
-
-**Or use your IDE's run button** 
+**Or use your IDE's run button**
 
 The app should now be running and showing a list of 3 hardcoded podcasts!
 
@@ -97,7 +89,7 @@ You have two main tickets to implement. See the **TICKETS.md** file for detailed
 
 ### Quick Overview:
 
-**Ticket 1**: Implement podcast search functionality  
+**Ticket 1**: Implement podcast search functionality
 **Ticket 2**: Add podcast detail screen with episodes
 
 ### Design References
@@ -153,12 +145,12 @@ part 'my_model.g.dart';
 class MyModel {
   final String id;
   final String name;
-  
+
   const MyModel({required this.id, required this.name});
-  
+
   factory MyModel.fromJson(Map<String, dynamic> json) =>
       _$MyModelFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$MyModelToJson(this);
 }
 ```
