@@ -215,8 +215,8 @@ When you're done:
 ```markdown
 ## Implementation Summary
 
-- [ ] Ticket 1: Search functionality
-- [ ] Ticket 2: Detail screen
+- [x] Ticket 1: Search functionality
+- [x] Ticket 2: Detail screen
 
 ## Technical Decisions
 
