@@ -1,0 +1,21 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcast_finder/features/home/data/repositories/podcast_repository.dart';
+import 'package:podcast_finder/features/home/data/datasources/podcast_datasource.dart';
+import '../../../../../core/network/dio_client.dart';
+import '../../../domain/repositories/podcast_repository.dart';
+import '../../../domain/usecases/podcast_usecases.dart';
+
+final podcastDataSourceProvider = Provider<PodcastDataSource>((ref) {
+  final dio = ref.watch(dioProvider);
+  return PodcastDataSourceImpl(dio);
+});
+
+final podcastRepositoryProvider = Provider<PodcastRepository>((ref) {
+  final podcastDataSource = ref.watch(podcastDataSourceProvider);
+  return PodcastRepositoryImpl(podcastDataSource);
+});
+
+final podcastUseCaseProvider = Provider<PodcastUseCase>((ref) {
+  final repository = ref.watch(podcastRepositoryProvider);
+  return PodcastUseCase(repository);
+});
