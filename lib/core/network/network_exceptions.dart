@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 
 sealed class NetworkException implements Exception {
   const NetworkException(this.message);
-  
+
   final String message;
-  
+
   factory NetworkException.fromDioError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
@@ -20,20 +20,20 @@ sealed class NetworkException implements Exception {
         return const UnknownException();
     }
   }
-  
+
   @override
   String toString() => message;
 }
 
 class TimeoutException extends NetworkException {
-  const TimeoutException() 
+  const TimeoutException()
       : super('Connection timeout. Please check your internet connection.');
 }
 
 class ServerException extends NetworkException {
   final int statusCode;
-  
-  const ServerException(this.statusCode) 
+
+  const ServerException(this.statusCode)
       : super('Server error ($statusCode). Please try again later.');
 }
 
@@ -42,6 +42,6 @@ class CancelException extends NetworkException {
 }
 
 class UnknownException extends NetworkException {
-  const UnknownException() 
+  const UnknownException()
       : super('An unexpected error occurred. Please try again.');
 }
