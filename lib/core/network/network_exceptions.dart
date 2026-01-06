@@ -27,14 +27,14 @@ sealed class NetworkException implements Exception {
 
 class TimeoutException extends NetworkException {
   const TimeoutException()
-      : super('Connection timeout. Please check your internet connection.');
+    : super('Connection timeout. Please check your internet connection.');
 }
 
 class ServerException extends NetworkException {
   final int statusCode;
 
   const ServerException(this.statusCode)
-      : super('Server error ($statusCode). Please try again later.');
+    : super('Server error ($statusCode). Please try again later.');
 }
 
 class CancelException extends NetworkException {
@@ -43,5 +43,5 @@ class CancelException extends NetworkException {
 
 class UnknownException extends NetworkException {
   const UnknownException()
-      : super('An unexpected error occurred. Please try again.');
+    : super('An unexpected error occurred. Please try again.');
 }
