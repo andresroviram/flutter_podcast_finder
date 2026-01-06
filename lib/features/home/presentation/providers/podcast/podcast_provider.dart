@@ -6,8 +6,8 @@ import '../../../domain/repositories/podcast_repository.dart';
 import '../../../domain/usecases/podcast_usecases.dart';
 
 final podcastDataSourceProvider = Provider<PodcastDataSource>((ref) {
-  final dio = ref.watch(dioProvider);
-  return PodcastDataSourceImpl(dio);
+  final apiClient = ref.watch(apiClientProvider);
+  return PodcastDataSourceImpl(apiClient);
 });
 
 final podcastRepositoryProvider = Provider<PodcastRepository>((ref) {

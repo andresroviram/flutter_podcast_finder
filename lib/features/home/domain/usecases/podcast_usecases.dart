@@ -1,3 +1,6 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:podcast_finder/core/error/failures.dart';
+
 import '../entities/entities.dart';
 import '../repositories/podcast_repository.dart';
 
@@ -6,11 +9,13 @@ class PodcastUseCase {
 
   final PodcastRepository podcastRepository;
 
-  Future<List<PodcastEntity>> searchPodcasts(String query) async {
+  Future<Either<Failure, List<PodcastEntity>>> searchPodcasts(
+    String query,
+  ) async {
     return podcastRepository.searchPodcasts(query);
   }
 
-  Future<PodcastDetailEntity> getPodcastById(String id) async {
+  Future<Either<Failure, PodcastDetailEntity>> getPodcastById(String id) async {
     return podcastRepository.getPodcastById(id);
   }
 }

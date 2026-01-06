@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:podcast_finder/core/network/network_exceptions.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:podcast_finder/core/error/failures.dart';
 
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/podcast_repository.dart';
@@ -13,24 +13,26 @@ final class PodcastRepositoryImpl implements PodcastRepository {
   PodcastRepositoryImpl(this._podcastDataSource);
 
   @override
-  Future<List<PodcastEntity>> searchPodcasts(String query) async {
+  Future<Either<Failure, List<PodcastEntity>>> searchPodcasts(
+    String query,
+  ) async {
     try {
       List<PodcastModel> models = await _podcastDataSource.searchPodcasts(
         query,
       );
-      return models.map((e) => e.toEntity()).toList();
-    } on DioException catch (e) {
-      throw NetworkException.fromDioError(e);
+      return Right(models.map((e) => e.toEntity()).toList());
+    } on Failure catch (e) {
+      return Left(e);
     }
   }
 
   @override
-  Future<PodcastDetailEntity> getPodcastById(String id) async {
+  Future<Either<Failure, PodcastDetailEntity>> getPodcastById(String id) async {
     try {
       PodcastDetailModel model = await _podcastDataSource.getPodcastById(id);
-      return model.toEntity();
-    } on DioException catch (e) {
-      throw NetworkException.fromDioError(e);
+      return Right(model.toEntity());
+    } on Failure catch (e) {
+      return Left(e);
     }
   }
 }
