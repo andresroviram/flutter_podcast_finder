@@ -36,6 +36,9 @@ dependencies:
   # Equatable for value comparison
   equatable: ^2.0.7
 
+  # Functional Programming
+  fpdart: ^1.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
