@@ -1,14 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:podcast_finder/features/home/domain/entities/entities.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/search/search_notifier.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/search/search_state.dart';
 import 'package:podcast_finder/features/home/domain/usecases/podcast_usecases.dart';
 import 'package:podcast_finder/features/home/presentation/providers/podcast/podcast_provider.dart';
-import 'package:podcast_finder/core/network/network_exceptions.dart';
+import 'package:podcast_finder/core/network/api_client.dart';
+import 'package:podcast_finder/core/error/failures.dart';
 
 class MockPodcastUseCase extends Mock implements PodcastUseCase {}
+
+class MockApiClient extends Mock implements ApiClient {}
 
 void main() {
   group('SearchNotifier', () {
@@ -56,7 +60,7 @@ void main() {
 
         when(
           () => mockPodcastUseCase.searchPodcasts('flutter'),
-        ).thenAnswer((_) async => mockPodcasts);
+        ).thenAnswer((_) async => const Right(mockPodcasts));
 
         final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -85,7 +89,7 @@ void main() {
 
       when(
         () => mockPodcastUseCase.searchPodcasts(''),
-      ).thenAnswer((_) async => mockPodcasts);
+      ).thenAnswer((_) async => const Right(mockPodcasts));
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -112,7 +116,7 @@ void main() {
 
       when(
         () => mockPodcastUseCase.searchPodcasts('   '),
-      ).thenAnswer((_) async => mockPodcasts);
+      ).thenAnswer((_) async => const Right(mockPodcasts));
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -128,7 +132,7 @@ void main() {
       // Arrange
       when(
         () => mockPodcastUseCase.searchPodcasts('nonexistent'),
-      ).thenAnswer((_) async => []);
+      ).thenAnswer((_) async => const Right(<PodcastEntity>[]));
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -145,9 +149,9 @@ void main() {
 
     test('search returns SearchError when NetworkException occurs', () async {
       // Arrange
-      when(
-        () => mockPodcastUseCase.searchPodcasts('error'),
-      ).thenThrow(const ServerException(500));
+      when(() => mockPodcastUseCase.searchPodcasts('error')).thenAnswer(
+        (_) async => const Left(ServerFailure(message: 'Server error')),
+      );
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -158,15 +162,15 @@ void main() {
       final state = container.read(searchNotifierProvider);
       expect(state, isA<SearchError>());
       if (state is SearchError) {
-        expect(state.message, 'Server error (500). Please try again later.');
+        expect(state.message, 'Server error');
       }
     });
 
     test('search returns SearchError when generic exception occurs', () async {
       // Arrange
-      when(
-        () => mockPodcastUseCase.searchPodcasts('error'),
-      ).thenThrow(Exception('Generic error'));
+      when(() => mockPodcastUseCase.searchPodcasts('error')).thenAnswer(
+        (_) async => const Left(ServerFailure(message: 'Generic error')),
+      );
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -177,10 +181,7 @@ void main() {
       final state = container.read(searchNotifierProvider);
       expect(state, isA<SearchError>());
       if (state is SearchError) {
-        expect(
-          state.message,
-          'An unexpected error occurred. Please try again.',
-        );
+        expect(state.message, 'Generic error');
       }
     });
 
@@ -191,7 +192,7 @@ void main() {
       ) async {
         // Simula delay
         await Future.delayed(const Duration(milliseconds: 100));
-        return [];
+        return const Right(<PodcastEntity>[]);
       });
 
       final notifier = container.read(searchNotifierProvider.notifier);

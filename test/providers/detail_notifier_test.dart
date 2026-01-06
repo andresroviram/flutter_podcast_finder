@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:podcast_finder/features/home/domain/entities/entities.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/detail/detail_notifier.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/detail/detail_state.dart';
 import 'package:podcast_finder/features/home/presentation/providers/podcast/podcast_provider.dart';
 import 'package:podcast_finder/features/home/domain/usecases/podcast_usecases.dart';
-import 'package:podcast_finder/core/network/network_exceptions.dart';
+import 'package:podcast_finder/core/error/failures.dart';
 
 class MockPodcastUseCase extends Mock implements PodcastUseCase {}
 
@@ -18,13 +19,24 @@ void main() {
     setUp(() {
       mockPodcastUseCase = MockPodcastUseCase();
 
+      // Setup default mock response para evitar errores en build()
+      when(() => mockPodcastUseCase.getPodcastById(any())).thenAnswer(
+        (_) async => const Right(
+          PodcastDetailEntity(
+            id: 'test',
+            title: 'Test',
+            publisher: 'Test',
+            episodes: [],
+          ),
+        ),
+      );
+
       container = ProviderContainer(
         overrides: [
           podcastUseCaseProvider.overrideWithValue(mockPodcastUseCase),
         ],
       );
     });
-
     tearDown(() {
       container.dispose();
     });
@@ -50,7 +62,7 @@ void main() {
 
         when(
           () => mockPodcastUseCase.getPodcastById('test-1'),
-        ).thenAnswer((_) async => mockPodcast);
+        ).thenAnswer((_) async => const Right(mockPodcast));
 
         final notifier = container.read(
           detailNotifierProvider('test-1').notifier,
@@ -73,9 +85,9 @@ void main() {
       'loadPodcastDetails returns DetailError when NetworkException occurs',
       () async {
         // Arrange
-        when(
-          () => mockPodcastUseCase.getPodcastById('error-id'),
-        ).thenThrow(const ServerException(404));
+        when(() => mockPodcastUseCase.getPodcastById('error-id')).thenAnswer(
+          (_) async => const Left(ServerFailure(message: 'Server error')),
+        );
 
         final notifier = container.read(
           detailNotifierProvider('error-id').notifier,
@@ -88,7 +100,7 @@ void main() {
         final state = container.read(detailNotifierProvider('error-id'));
         expect(state, isA<DetailError>());
         if (state is DetailError) {
-          expect(state.message, 'Server error (404). Please try again later.');
+          expect(state.message, 'Server error');
         }
       },
     );
@@ -97,9 +109,9 @@ void main() {
       'loadPodcastDetails returns DetailError when generic exception occurs',
       () async {
         // Arrange
-        when(
-          () => mockPodcastUseCase.getPodcastById('error-id'),
-        ).thenThrow(Exception('Generic error'));
+        when(() => mockPodcastUseCase.getPodcastById('error-id')).thenAnswer(
+          (_) async => const Left(ServerFailure(message: 'Generic error')),
+        );
 
         final notifier = container.read(
           detailNotifierProvider('error-id').notifier,
@@ -112,10 +124,7 @@ void main() {
         final state = container.read(detailNotifierProvider('error-id'));
         expect(state, isA<DetailError>());
         if (state is DetailError) {
-          expect(
-            state.message,
-            'An unexpected error occurred. Please try again.',
-          );
+          expect(state.message, 'Generic error');
         }
       },
     );
@@ -127,11 +136,13 @@ void main() {
       ) async {
         // Simula delay
         await Future.delayed(const Duration(milliseconds: 100));
-        return const PodcastDetailEntity(
-          id: 'test-id',
-          title: 'Test Podcast',
-          publisher: 'Test Publisher',
-          episodes: [],
+        return const Right(
+          PodcastDetailEntity(
+            id: 'test-id',
+            title: 'Test Podcast',
+            publisher: 'Test Publisher',
+            episodes: [],
+          ),
         );
       });
 
