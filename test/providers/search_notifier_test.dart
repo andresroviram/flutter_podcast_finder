@@ -128,7 +128,7 @@ void main() {
       // Assert
       final state = container.read(searchNotifierProvider);
       state.maybeWhen(
-        success: (_, __) {},
+        success: (_, _) {},
         orElse: () => fail('State is not success'),
       );
     });
