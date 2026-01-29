@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:podcast_finder/core/result.dart' as result;
+import 'package:podcast_finder/core/error/failures.dart';
 import 'package:podcast_finder/features/home/domain/entities/entities.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/detail/detail_notifier.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/detail/detail_state.dart';
 import 'package:podcast_finder/features/home/presentation/providers/podcast/podcast_provider.dart';
 import 'package:podcast_finder/features/home/domain/usecases/podcast_usecases.dart';
-import 'package:podcast_finder/core/error/failures.dart';
 
 class MockPodcastUseCase extends Mock implements PodcastUseCase {}
 
@@ -21,7 +21,7 @@ void main() {
 
       // Setup default mock response para evitar errores en build()
       when(() => mockPodcastUseCase.getPodcastById(any())).thenAnswer(
-        (_) async => const Right(
+        (_) async => const result.Success(
           PodcastDetailEntity(
             id: 'test',
             title: 'Test',
@@ -46,7 +46,7 @@ void main() {
       final state = container.read(detailNotifierProvider('test-podcast-id'));
 
       // Assert
-      expect(state, isA<DetailInitial>());
+      expect(state, const DetailState.initial());
     });
 
     test(
@@ -62,7 +62,7 @@ void main() {
 
         when(
           () => mockPodcastUseCase.getPodcastById('test-1'),
-        ).thenAnswer((_) async => const Right(mockPodcast));
+        ).thenAnswer((_) async => const result.Success(mockPodcast));
 
         final notifier = container.read(
           detailNotifierProvider('test-1').notifier,
@@ -73,11 +73,13 @@ void main() {
 
         // Assert
         final state = container.read(detailNotifierProvider('test-1'));
-        expect(state, isA<DetailSuccess>());
-        if (state is DetailSuccess) {
-          expect(state.podcast.id, 'test-1');
-          expect(state.podcast.title, 'Test Podcast');
-        }
+        state.maybeWhen(
+          success: (podcast) {
+            expect(podcast.id, 'test-1');
+            expect(podcast.title, 'Test Podcast');
+          },
+          orElse: () => fail('State is not success'),
+        );
       },
     );
 
@@ -86,7 +88,8 @@ void main() {
       () async {
         // Arrange
         when(() => mockPodcastUseCase.getPodcastById('error-id')).thenAnswer(
-          (_) async => const Left(ServerFailure(message: 'Server error')),
+          (_) async =>
+              const result.Failure(ServerFailure(message: 'Server error')),
         );
 
         final notifier = container.read(
@@ -98,10 +101,10 @@ void main() {
 
         // Assert
         final state = container.read(detailNotifierProvider('error-id'));
-        expect(state, isA<DetailError>());
-        if (state is DetailError) {
-          expect(state.message, 'Server error');
-        }
+        state.maybeWhen(
+          error: (message) => expect(message, 'Server error'),
+          orElse: () => fail('State is not error'),
+        );
       },
     );
 
@@ -110,7 +113,8 @@ void main() {
       () async {
         // Arrange
         when(() => mockPodcastUseCase.getPodcastById('error-id')).thenAnswer(
-          (_) async => const Left(ServerFailure(message: 'Generic error')),
+          (_) async =>
+              const result.Failure(ServerFailure(message: 'Generic error')),
         );
 
         final notifier = container.read(
@@ -122,10 +126,10 @@ void main() {
 
         // Assert
         final state = container.read(detailNotifierProvider('error-id'));
-        expect(state, isA<DetailError>());
-        if (state is DetailError) {
-          expect(state.message, 'Generic error');
-        }
+        state.maybeWhen(
+          error: (message) => expect(message, 'Generic error'),
+          orElse: () => fail('State is not error'),
+        );
       },
     );
 
@@ -136,7 +140,7 @@ void main() {
       ) async {
         // Simula delay
         await Future.delayed(const Duration(milliseconds: 100));
-        return const Right(
+        return const result.Success(
           PodcastDetailEntity(
             id: 'test-id',
             title: 'Test Podcast',
@@ -156,12 +160,15 @@ void main() {
       // Assert loading state
       await Future.delayed(const Duration(milliseconds: 50));
       final loadingState = container.read(detailNotifierProvider('test-id'));
-      expect(loadingState, isA<DetailLoading>());
+      expect(loadingState, const DetailState.loading());
 
       // Wait for completion
       await future;
       final finalState = container.read(detailNotifierProvider('test-id'));
-      expect(finalState, isA<DetailSuccess>());
+      finalState.maybeWhen(
+        success: (_) {},
+        orElse: () => fail('State is not success'),
+      );
     });
 
     test('reset returns state to initial', () {
@@ -175,7 +182,7 @@ void main() {
 
       // Assert
       final state = container.read(detailNotifierProvider('test-podcast-id'));
-      expect(state, isA<DetailInitial>());
+      expect(state, const DetailState.initial());
     });
   });
 

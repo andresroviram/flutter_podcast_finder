@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// A custom search text field widget for searching podcasts
 class SearchTextField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;

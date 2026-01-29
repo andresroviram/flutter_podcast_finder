@@ -51,7 +51,7 @@ class ApiClient {
   }
 
   // Handle Dio errors
-  Failure _handleError(DioException e) {
+  Failures _handleError(DioException e) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:

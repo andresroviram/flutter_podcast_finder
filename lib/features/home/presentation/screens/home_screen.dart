@@ -65,16 +65,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildBody(SearchState state) {
-    if (state is SearchLoading) {
-      return _buildLoadingState();
-    } else if (state is SearchSuccess) {
-      return _buildSuccessState(state.podcasts);
-    } else if (state is SearchEmpty) {
-      return _buildEmptyState(state.query);
-    } else if (state is SearchError) {
-      return _buildErrorState(state.message);
-    }
-    return _buildLoadingState();
+    return state.when(
+      initial: _buildLoadingState,
+      loading: _buildLoadingState,
+      success: (podcasts, _) => _buildSuccessState(podcasts),
+      empty: _buildEmptyState,
+      error: _buildErrorState,
+    );
   }
 
   Widget _buildLoadingState() {

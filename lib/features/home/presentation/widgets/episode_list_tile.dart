@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/entities.dart';
 
-/// A widget that displays an episode in a list format
-/// Shows episode title, date, duration, and optional description
 class EpisodeListTile extends StatelessWidget {
   final EpisodeEntity episode;
 
@@ -39,7 +37,6 @@ class EpisodeListTile extends StatelessWidget {
               style: const TextStyle(fontSize: 14, color: Color(0xFF6C757D)),
             ),
 
-            // Episode description (optional)
             if (episode.description != null) ...[
               const SizedBox(height: 8),
               Text(

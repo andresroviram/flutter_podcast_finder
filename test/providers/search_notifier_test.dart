@@ -1,14 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:podcast_finder/core/result.dart' as result;
+import 'package:podcast_finder/core/error/failures.dart';
 import 'package:podcast_finder/features/home/domain/entities/entities.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/search/search_notifier.dart';
 import 'package:podcast_finder/features/home/presentation/controllers/search/search_state.dart';
 import 'package:podcast_finder/features/home/domain/usecases/podcast_usecases.dart';
 import 'package:podcast_finder/features/home/presentation/providers/podcast/podcast_provider.dart';
 import 'package:podcast_finder/core/network/api_client.dart';
-import 'package:podcast_finder/core/error/failures.dart';
 
 class MockPodcastUseCase extends Mock implements PodcastUseCase {}
 
@@ -38,7 +38,7 @@ void main() {
       final state = container.read(searchNotifierProvider);
 
       // Assert
-      expect(state, isA<SearchInitial>());
+      expect(state, const SearchState.initial());
     });
 
     test(
@@ -60,7 +60,7 @@ void main() {
 
         when(
           () => mockPodcastUseCase.searchPodcasts('flutter'),
-        ).thenAnswer((_) async => const Right(mockPodcasts));
+        ).thenAnswer((_) async => const result.Success(mockPodcasts));
 
         final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -69,11 +69,13 @@ void main() {
 
         // Assert
         final state = container.read(searchNotifierProvider);
-        expect(state, isA<SearchSuccess>());
-        if (state is SearchSuccess) {
-          expect(state.podcasts, mockPodcasts);
-          expect(state.query, 'flutter');
-        }
+        state.maybeWhen(
+          success: (podcasts, query) {
+            expect(podcasts, mockPodcasts);
+            expect(query, 'flutter');
+          },
+          orElse: () => fail('State is not success'),
+        );
       },
     );
 
@@ -89,7 +91,7 @@ void main() {
 
       when(
         () => mockPodcastUseCase.searchPodcasts(''),
-      ).thenAnswer((_) async => const Right(mockPodcasts));
+      ).thenAnswer((_) async => const result.Success(mockPodcasts));
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -98,10 +100,10 @@ void main() {
 
       // Assert
       final state = container.read(searchNotifierProvider);
-      expect(state, isA<SearchSuccess>());
-      if (state is SearchSuccess) {
-        expect(state.podcasts, mockPodcasts);
-      }
+      state.maybeWhen(
+        success: (podcasts, _) => expect(podcasts, mockPodcasts),
+        orElse: () => fail('State is not success'),
+      );
     });
 
     test('search with whitespace query loads all podcasts', () async {
@@ -116,7 +118,7 @@ void main() {
 
       when(
         () => mockPodcastUseCase.searchPodcasts('   '),
-      ).thenAnswer((_) async => const Right(mockPodcasts));
+      ).thenAnswer((_) async => const result.Success(mockPodcasts));
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -125,14 +127,17 @@ void main() {
 
       // Assert
       final state = container.read(searchNotifierProvider);
-      expect(state, isA<SearchSuccess>());
+      state.maybeWhen(
+        success: (_, __) {},
+        orElse: () => fail('State is not success'),
+      );
     });
 
     test('search returns SearchEmpty when no podcasts found', () async {
       // Arrange
       when(
         () => mockPodcastUseCase.searchPodcasts('nonexistent'),
-      ).thenAnswer((_) async => const Right(<PodcastEntity>[]));
+      ).thenAnswer((_) async => const result.Success(<PodcastEntity>[]));
 
       final notifier = container.read(searchNotifierProvider.notifier);
 
@@ -141,16 +146,17 @@ void main() {
 
       // Assert
       final state = container.read(searchNotifierProvider);
-      expect(state, isA<SearchEmpty>());
-      if (state is SearchEmpty) {
-        expect(state.query, 'nonexistent');
-      }
+      state.maybeWhen(
+        empty: (query) => expect(query, 'nonexistent'),
+        orElse: () => fail('State is not empty'),
+      );
     });
 
     test('search returns SearchError when NetworkException occurs', () async {
       // Arrange
       when(() => mockPodcastUseCase.searchPodcasts('error')).thenAnswer(
-        (_) async => const Left(ServerFailure(message: 'Server error')),
+        (_) async =>
+            const result.Failure(ServerFailure(message: 'Server error')),
       );
 
       final notifier = container.read(searchNotifierProvider.notifier);
@@ -160,16 +166,17 @@ void main() {
 
       // Assert
       final state = container.read(searchNotifierProvider);
-      expect(state, isA<SearchError>());
-      if (state is SearchError) {
-        expect(state.message, 'Server error');
-      }
+      state.maybeWhen(
+        error: (message) => expect(message, 'Server error'),
+        orElse: () => fail('State is not error'),
+      );
     });
 
     test('search returns SearchError when generic exception occurs', () async {
       // Arrange
       when(() => mockPodcastUseCase.searchPodcasts('error')).thenAnswer(
-        (_) async => const Left(ServerFailure(message: 'Generic error')),
+        (_) async =>
+            const result.Failure(ServerFailure(message: 'Generic error')),
       );
 
       final notifier = container.read(searchNotifierProvider.notifier);
@@ -179,10 +186,10 @@ void main() {
 
       // Assert
       final state = container.read(searchNotifierProvider);
-      expect(state, isA<SearchError>());
-      if (state is SearchError) {
-        expect(state.message, 'Generic error');
-      }
+      state.maybeWhen(
+        error: (message) => expect(message, 'Generic error'),
+        orElse: () => fail('State is not error'),
+      );
     });
 
     test('search sets loading state during execution', () async {
@@ -192,7 +199,7 @@ void main() {
       ) async {
         // Simula delay
         await Future.delayed(const Duration(milliseconds: 100));
-        return const Right(<PodcastEntity>[]);
+        return const result.Success(<PodcastEntity>[]);
       });
 
       final notifier = container.read(searchNotifierProvider.notifier);
@@ -203,12 +210,15 @@ void main() {
       // Assert loading state
       await Future.delayed(const Duration(milliseconds: 50));
       final loadingState = container.read(searchNotifierProvider);
-      expect(loadingState, isA<SearchLoading>());
+      expect(loadingState, const SearchState.loading());
 
       // Wait for completion
       await future;
       final finalState = container.read(searchNotifierProvider);
-      expect(finalState, isA<SearchEmpty>());
+      finalState.maybeWhen(
+        empty: (_) {},
+        orElse: () => fail('State is not empty'),
+      );
     });
 
     test('reset returns state to initial', () {
@@ -220,7 +230,7 @@ void main() {
 
       // Assert
       final state = container.read(searchNotifierProvider);
-      expect(state, isA<SearchInitial>());
+      expect(state, const SearchState.initial());
     });
 
     test('filterPodcastsByTitle filters podcasts correctly', () {

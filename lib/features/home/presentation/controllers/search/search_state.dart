@@ -1,32 +1,16 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../domain/entities/entities.dart';
 
-abstract class SearchState {
-  const SearchState();
-}
+part 'search_state.freezed.dart';
 
-class SearchInitial extends SearchState {
-  const SearchInitial();
-}
-
-class SearchLoading extends SearchState {
-  const SearchLoading();
-}
-
-class SearchSuccess extends SearchState {
-  final List<PodcastEntity> podcasts;
-  final String query;
-
-  const SearchSuccess(this.podcasts, this.query);
-}
-
-class SearchEmpty extends SearchState {
-  final String query;
-
-  const SearchEmpty(this.query);
-}
-
-class SearchError extends SearchState {
-  final String message;
-
-  const SearchError(this.message);
+@freezed
+class SearchState with _$SearchState {
+  const factory SearchState.initial() = SearchInitial;
+  const factory SearchState.loading() = SearchLoading;
+  const factory SearchState.success(
+    List<PodcastEntity> podcasts,
+    String query,
+  ) = SearchSuccess;
+  const factory SearchState.empty(String query) = SearchEmpty;
+  const factory SearchState.error(String message) = SearchError;
 }

@@ -26,7 +26,7 @@ class PodcastDataSourceImpl implements PodcastDataSource {
         'results',
         callback: PodcastModel.fromJson,
       );
-    } on Failure catch (_) {
+    } on Failures catch (_) {
       rethrow;
     }
   }
@@ -34,12 +34,12 @@ class PodcastDataSourceImpl implements PodcastDataSource {
   @override
   Future<PodcastDetailModel> getPodcastById(String id) async {
     try {
-      final response = await _apiClient.get('/podcasts/$id');
-
-      return response.withConverter<PodcastDetailModel>(
+      return (await _apiClient.get(
+        '/podcasts/$id',
+      )).withConverter<PodcastDetailModel>(
         callback: PodcastDetailModel.fromJson,
       );
-    } on Failure catch (_) {
+    } on Failures catch (_) {
       rethrow;
     }
   }

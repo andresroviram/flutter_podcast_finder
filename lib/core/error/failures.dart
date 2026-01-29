@@ -1,31 +1,30 @@
 import 'package:equatable/equatable.dart';
 
-abstract class Failure extends Equatable {
+abstract class Failures extends Equatable {
   final String message;
   final int? statusCode;
 
-  const Failure({required this.message, this.statusCode});
-
+  const Failures({required this.message, this.statusCode});
   @override
   List<Object?> get props => [message, statusCode];
 }
 
 // Network failures
-class NetworkFailure extends Failure {
+class NetworkFailure extends Failures {
   const NetworkFailure({
     super.message = 'No internet connection',
     super.statusCode,
   });
 }
 
-class ServerFailure extends Failure {
+class ServerFailure extends Failures {
   const ServerFailure({
     super.message = 'Server error occurred',
     super.statusCode,
   });
 }
 
-class TimeoutFailure extends Failure {
+class TimeoutFailure extends Failures {
   const TimeoutFailure({
     super.message = 'Connection timeout',
     super.statusCode,
@@ -33,11 +32,11 @@ class TimeoutFailure extends Failure {
 }
 
 // Data failures
-class CacheFailure extends Failure {
+class CacheFailure extends Failures {
   const CacheFailure({super.message = 'Cache failure', super.statusCode});
 }
 
-class ValidationFailure extends Failure {
+class ValidationFailure extends Failures {
   const ValidationFailure({
     super.message = 'Validation error',
     super.statusCode,
@@ -45,20 +44,20 @@ class ValidationFailure extends Failure {
 }
 
 // Auth failures
-class AuthFailure extends Failure {
+class AuthFailure extends Failures {
   const AuthFailure({
     super.message = 'Authentication failed',
     super.statusCode,
   });
 }
 
-class UnauthorizedFailure extends Failure {
+class UnauthorizedFailure extends Failures {
   const UnauthorizedFailure({
     super.message = 'Unauthorized access',
     super.statusCode,
   });
 }
 
-class InputFailure extends Failure {
+class InputFailure extends Failures {
   const InputFailure({super.message = 'Invalid input', super.statusCode});
 }

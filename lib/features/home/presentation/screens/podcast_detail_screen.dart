@@ -20,14 +20,12 @@ class PodcastDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref, DetailState state) {
-    if (state is DetailLoading) {
-      return _buildLoadingState(context);
-    } else if (state is DetailSuccess) {
-      return _buildSuccessState(context, state.podcast);
-    } else if (state is DetailError) {
-      return _buildErrorState(context, ref, state.message);
-    }
-    return _buildLoadingState(context);
+    return state.when(
+      initial: () => _buildLoadingState(context),
+      loading: () => _buildLoadingState(context),
+      success: (podcast) => _buildSuccessState(context, podcast),
+      error: (message) => _buildErrorState(context, ref, message),
+    );
   }
 
   Widget _buildLoadingState(BuildContext context) {

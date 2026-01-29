@@ -1,25 +1,13 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../domain/entities/entities.dart';
 
-abstract class DetailState {
-  const DetailState();
-}
+part 'detail_state.freezed.dart';
 
-class DetailInitial extends DetailState {
-  const DetailInitial();
-}
-
-class DetailLoading extends DetailState {
-  const DetailLoading();
-}
-
-class DetailSuccess extends DetailState {
-  final PodcastDetailEntity podcast;
-
-  const DetailSuccess(this.podcast);
-}
-
-class DetailError extends DetailState {
-  final String message;
-
-  const DetailError(this.message);
+@freezed
+class DetailState with _$DetailState {
+  const factory DetailState.initial() = DetailInitial;
+  const factory DetailState.loading() = DetailLoading;
+  const factory DetailState.success(PodcastDetailEntity podcast) =
+      DetailSuccess;
+  const factory DetailState.error(String message) = DetailError;
 }
