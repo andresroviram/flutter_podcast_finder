@@ -8,6 +8,8 @@ import '../controllers/search/search_notifier.dart';
 import '../controllers/search/search_state.dart';
 import '../widgets/podcast_card.dart';
 import '../widgets/search_textfield.dart';
+import '../../../../components/glass_widgets.dart';
+import '../../../../components/modern_scroll_behavior.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -47,19 +49,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final searchState = ref.watch(searchNotifierProvider);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('PodcastFinder'),
         elevation: 0,
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.transparent,
       ),
-      body: Column(
-        children: [
-          SearchTextField(
-            controller: _searchController,
-            onChanged: _onSearchChanged,
+      body: GlassBackground(
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  SearchTextField(
+                    controller: _searchController,
+                    onChanged: _onSearchChanged,
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(child: _buildBody(searchState)),
+                ],
+              ),
+            ],
           ),
-          Expanded(child: _buildBody(searchState)),
-        ],
+        ),
       ),
     );
   }
@@ -79,17 +91,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildSuccessState(List<PodcastEntity> podcasts) {
-    return ListView.builder(
-      itemCount: podcasts.length,
-      itemBuilder: (context, index) {
-        final podcast = podcasts[index];
-        return PodcastCard(
-          podcast: podcast,
-          onTap: () {
-            context.push('/podcast/${podcast.id}');
-          },
-        );
-      },
+    return ScrollConfiguration(
+      behavior: ModernScrollBehavior(),
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: podcasts.length,
+        itemBuilder: (context, index) {
+          final podcast = podcasts[index];
+          return PodcastCard(
+            podcast: podcast,
+            onTap: () {
+              context.push('/podcast/${podcast.id}');
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -170,3 +186,4 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
+

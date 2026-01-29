@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../components/glass_widgets.dart';
 
 class SearchTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -14,24 +15,27 @@ class SearchTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: SizedBox(
-        height: 48,
-        child: TextField(
-          controller: controller,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            hintText: 'Search podcasts...',
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+      child: GlassContainer(
+        borderRadius: BorderRadius.circular(12),
+        opacity: 0.38,
+        blur: 18,
+        padding: EdgeInsets.zero,
+        child: SizedBox(
+          height: 48,
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            decoration: const InputDecoration(
+              hintText: 'Search podcasts...',
+              prefixIcon: Icon(Icons.search),
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+              fillColor: Colors.transparent,
+              filled: true,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0),
           ),
         ),
       ),
