@@ -2,6 +2,14 @@
 
 Welcome! This is the base project for the mobile developer coding assessment. Your task will be to extend this project by implementing podcast search and detail functionality.
 
+## Capturas de pantalla
+
+<p align="center">
+  <img src="screenshots/Screenshot_1769722603.png" alt="Pantalla principal" width="250" />
+  <img src="screenshots/Screenshot_1769722632.png" alt="Detalle de podcast" width="250" />
+</p>
+
+
 ## 📋 Prerequisites
 
 Before starting, make sure you have:
