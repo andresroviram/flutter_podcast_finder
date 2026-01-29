@@ -59,7 +59,8 @@ The app should now be running and showing a list of 3 hardcoded podcasts!
 This project uses **Feature-First Architecture** with clean separation of concerns:
 ```
 lib/
-├── core/               # Shared code across features
+├── components/        # App-wide reusable widgets/utilidades (Glass, Scroll, etc.)
+├── core/              # Shared code across features
 │   ├── network/       # HTTP client, API config, error handling
 │   ├── router/        # Navigation configuration (go_router)
 │   ├── theme/         # App theming and colors
