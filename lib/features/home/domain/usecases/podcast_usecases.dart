@@ -6,7 +6,7 @@ import '../repositories/podcast_repository.dart';
 class PodcastUseCase {
   PodcastUseCase(this.podcastRepository);
 
-  final PodcastRepository podcastRepository;
+  final IPodcastRepository podcastRepository;
 
   Future<Result<List<PodcastEntity>>> searchPodcasts(String query) async {
     return podcastRepository.searchPodcasts(query);

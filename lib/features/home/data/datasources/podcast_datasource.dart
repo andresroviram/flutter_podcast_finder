@@ -4,12 +4,12 @@ import '../../../../core/network/dio_response_extensions.dart';
 import '../models/podcast_model.dart';
 import '../models/podcast_detail_model.dart';
 
-abstract class PodcastDataSource {
+abstract class IPodcastDataSource {
   Future<List<PodcastModel>> searchPodcasts(String query);
   Future<PodcastDetailModel> getPodcastById(String id);
 }
 
-class PodcastDataSourceImpl implements PodcastDataSource {
+class PodcastDataSourceImpl implements IPodcastDataSource {
   final ApiClient _apiClient;
 
   PodcastDataSourceImpl(this._apiClient);

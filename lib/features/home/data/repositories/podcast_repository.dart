@@ -7,8 +7,8 @@ import '../datasources/podcast_datasource.dart';
 import '../models/podcast_model.dart';
 import '../models/podcast_detail_model.dart';
 
-final class PodcastRepositoryImpl implements PodcastRepository {
-  final PodcastDataSource _podcastDataSource;
+final class PodcastRepositoryImpl implements IPodcastRepository {
+  final IPodcastDataSource _podcastDataSource;
 
   PodcastRepositoryImpl(this._podcastDataSource);
 
