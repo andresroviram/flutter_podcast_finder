@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../components/glass_widgets.dart';
 import '../../../../components/modern_scroll_behavior.dart';
@@ -29,7 +30,7 @@ class PodcastDetailScreen extends ConsumerWidget {
             initial: () => _buildLoadingState(context),
             loading: () => _buildLoadingState(context),
             success: (podcast) => _buildSuccessState(context, podcast),
-            error: (message) => _buildErrorState(context, ref, message),
+            error: (message) => _buildErrorState(ref, message),
           ),
         ],
       ),
@@ -62,7 +63,7 @@ class PodcastDetailScreen extends ConsumerWidget {
                   color: AppColors.black70,
                   size: 20,
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
                 padding: EdgeInsets.zero,
               ),
             ),
@@ -133,7 +134,7 @@ class PodcastDetailScreen extends ConsumerWidget {
                   color: AppColors.black70,
                   size: 20,
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
                 padding: EdgeInsets.zero,
               ),
             ),
@@ -257,7 +258,7 @@ class PodcastDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, String message) {
+  Widget _buildErrorState(WidgetRef ref, String message) {
     return ScrollConfiguration(
       behavior: ModernScrollBehavior(),
       child: CustomScrollView(

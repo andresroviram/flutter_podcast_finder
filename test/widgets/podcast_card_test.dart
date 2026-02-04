@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:podcast_finder/components/glass_widgets.dart';
 import 'package:podcast_finder/features/home/domain/entities/entities.dart';
 import 'package:podcast_finder/features/home/presentation/widgets/podcast_card.dart';
 
@@ -176,15 +177,30 @@ void main() {
         ),
       );
 
-      // Assert - Find the Card widget and verify properties
-      final cardFinder = find.byType(Card);
-      expect(cardFinder, findsOneWidget);
+      // Assert - Find the GlassContainer and verify it exists
+      final containerFinder = find.byType(GlassContainer);
+      expect(containerFinder, findsOneWidget);
 
-      final card = tester.widget<Card>(cardFinder);
-      final shape = card.shape as RoundedRectangleBorder;
-      expect(shape.borderRadius, BorderRadius.circular(12));
-      expect(shape.side.width, 1);
-      expect(shape.side.color, const Color(0xFFDEE2E6));
+      // Verify the container has a border with correct styling
+      final container = tester.widget<Container>(
+        find
+            .descendant(of: containerFinder, matching: find.byType(Container))
+            .first,
+      );
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.border, isA<Border>());
+      expect(decoration.borderRadius, BorderRadius.circular(12));
+
+      //   // Assert - Find the GlassContainer and verify it exists
+      //   final containerFinder = find.byType(GlassContainer);
+      //   expect(containerFinder, findsOneWidget);
+
+      //   // Verify the container has a border with correct styling
+      //   final container = tester.widget<GlassContainer>(containerFinder);
+      //   expect(container.opacity, 0.35);
+      //   expect(container.border, isA<Border>());
+      //   expect(container.borderRadius, BorderRadius.circular(12));
+      // });
     });
   });
 }

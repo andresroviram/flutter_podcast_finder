@@ -26,7 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _debouncer = Debouncer(duration: const Duration(milliseconds: 500));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.microtask(() {
       ref.read(searchNotifierProvider.notifier).search('');
     });
   }
@@ -186,4 +186,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-

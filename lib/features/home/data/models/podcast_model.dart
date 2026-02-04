@@ -27,22 +27,6 @@ class PodcastModel {
       _$PodcastModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PodcastModelToJson(this);
-
-  PodcastModel copyWith({
-    String? id,
-    String? title,
-    String? publisher,
-    String? imageUrl,
-    String? description,
-  }) {
-    return PodcastModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      publisher: publisher ?? this.publisher,
-      imageUrl: imageUrl ?? this.imageUrl,
-      description: description ?? this.description,
-    );
-  }
 }
 
 extension PodcastModelMapper on PodcastModel {
