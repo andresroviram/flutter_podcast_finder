@@ -2,6 +2,14 @@
 
 Welcome! This is the base project for the mobile developer coding assessment. Your task will be to extend this project by implementing podcast search and detail functionality.
 
+## Capturas de pantalla
+
+<p align="center">
+  <img src="screenshots/Screenshot_1769722603.png" alt="Pantalla principal" width="250" />
+  <img src="screenshots/Screenshot_1769722632.png" alt="Detalle de podcast" width="250" />
+</p>
+
+
 ## 📋 Prerequisites
 
 Before starting, make sure you have:
@@ -12,17 +20,15 @@ Before starting, make sure you have:
 
 - **IDE**: Android Studio, VS Code, or IntelliJ IDEA with Flutter plugins
 
-- **Devices**: 
+- **Devices**:
   - **Android**: Android Studio with emulator, or physical device
   - **iOS**: Xcode with simulator (Mac only), or physical device
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
-```bash
-git clone <repository-url>
-cd podcast_finder
-```
+### 1. Download and upload the base project to a git repository
+
+Download the project podcast\_finder.zip and upload the base project to Gitlab/Github.
 
 ### 2. Install dependencies
 ```bash
@@ -40,17 +46,11 @@ dart run build_runner build --delete-conflicting-outputs
 
 ### 4. Run the app
 
-**For Android:**
 ```bash
 flutter run
 ```
 
-**For iOS (Mac only):**
-```bash
-flutter run
-```
-
-**Or use your IDE's run button** 
+**Or use your IDE's run button**
 
 The app should now be running and showing a list of 3 hardcoded podcasts!
 
@@ -59,7 +59,8 @@ The app should now be running and showing a list of 3 hardcoded podcasts!
 This project uses **Feature-First Architecture** with clean separation of concerns:
 ```
 lib/
-├── core/               # Shared code across features
+├── components/        # App-wide reusable widgets/utilidades (Glass, Scroll, etc.)
+├── core/              # Shared code across features
 │   ├── network/       # HTTP client, API config, error handling
 │   ├── router/        # Navigation configuration (go_router)
 │   ├── theme/         # App theming and colors
@@ -97,7 +98,7 @@ You have two main tickets to implement. See the **TICKETS.md** file for detailed
 
 ### Quick Overview:
 
-**Ticket 1**: Implement podcast search functionality  
+**Ticket 1**: Implement podcast search functionality
 **Ticket 2**: Add podcast detail screen with episodes
 
 ### Design References
@@ -153,12 +154,12 @@ part 'my_model.g.dart';
 class MyModel {
   final String id;
   final String name;
-  
+
   const MyModel({required this.id, required this.name});
-  
+
   factory MyModel.fromJson(Map<String, dynamic> json) =>
       _$MyModelFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$MyModelToJson(this);
 }
 ```
@@ -223,8 +224,8 @@ When you're done:
 ```markdown
 ## Implementation Summary
 
-- [ ] Ticket 1: Search functionality
-- [ ] Ticket 2: Detail screen
+- [x] Ticket 1: Search functionality
+- [x] Ticket 2: Detail screen
 
 ## Technical Decisions
 

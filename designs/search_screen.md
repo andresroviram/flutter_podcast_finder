@@ -31,7 +31,7 @@
 - Error state: Same as placeholder
 
 ### Right Section - Content
-- **Title**: 
+- **Title**:
   - Font size: 16px
   - Weight: Semi-bold (600)
   - Color: #212529

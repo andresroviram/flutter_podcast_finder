@@ -16,13 +16,13 @@ Users need to search for podcasts by keyword. Currently, the app shows only a ha
 
 ### Acceptance Criteria
 
-- [ ] User can type in the search TextField
-- [ ] Search triggers API call after 500ms of no typing (debouncing)
-- [ ] Results replace the hardcoded list
-- [ ] Show `CircularProgressIndicator` while loading
-- [ ] Show error message with retry option if request fails
-- [ ] Show "No podcasts found" message when results are empty
-- [ ] Each podcast displays: image, title, publisher, and description (max 2 lines)
+- [x] User can type in the search TextField
+- [x] Search triggers API call after 500ms of no typing (debouncing)
+- [x] Results replace the hardcoded list
+- [x] Show `CircularProgressIndicator` while loading
+- [x] Show error message with retry option if request fails
+- [x] Show "No podcasts found" message when results are empty
+- [x] Each podcast displays: image, title, publisher, and description (max 2 lines)
 
 ### Technical Resources
 
@@ -40,17 +40,17 @@ Users need to search for podcasts by keyword. Currently, the app shows only a ha
 
 Here's how you might break this down (you can structure differently):
 
-- [ ] Create `PodcastRepository` class with `searchPodcasts` method
-- [ ] Create `PodcastRemoteDataSource` for API calls using `dioProvider`
-- [ ] Create `SearchNotifier` extending `StateNotifier` with search states
-- [ ] Create search state classes (Loading, Success, Error, Empty)
-- [ ] Create `searchNotifierProvider` using `StateNotifierProvider`
-- [ ] Update `HomeScreen` to use the search provider
-- [ ] Make TextField functional and implement debouncing
-- [ ] Add loading, error, and empty state widgets
-- [ ] Handle `NetworkException` errors properly
-- [ ] Add unit tests for `SearchNotifier`
-- [ ] Add widget test for `PodcastCard`
+- [x] Create `PodcastRepository` class with `searchPodcasts` method
+- [x] Create `PodcastRemoteDataSource` for API calls using `dioProvider`
+- [x] Create `SearchNotifier` extending `StateNotifier` with search states
+- [x] Create search state classes (Loading, Success, Error, Empty)
+- [x] Create `searchNotifierProvider` using `StateNotifierProvider`
+- [x] Update `HomeScreen` to use the search provider
+- [x] Make TextField functional and implement debouncing
+- [x] Add loading, error, and empty state widgets
+- [x] Handle `NetworkException` errors properly
+- [x] Add unit tests for `SearchNotifier`
+- [x] Add widget test for `PodcastCard`
 
 ### Architecture Example
 ```dart
@@ -70,9 +70,9 @@ class SearchError extends SearchState {
 // Notifier
 class SearchNotifier extends StateNotifier<SearchState> {
   SearchNotifier(this._repository) : super(SearchInitial());
-  
+
   final PodcastRepository _repository;
-  
+
   Future<void> search(String query) async {
     state = SearchLoading();
     try {
@@ -85,7 +85,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
 }
 
 // Provider
-final searchNotifierProvider = 
+final searchNotifierProvider =
     StateNotifierProvider<SearchNotifier, SearchState>((ref) {
   final repository = ref.watch(podcastRepositoryProvider);
   return SearchNotifier(repository);
@@ -101,13 +101,13 @@ When a user taps on a podcast, they should see detailed information and the late
 
 ### Acceptance Criteria
 
-- [ ] Tapping a podcast navigates to detail screen
-- [ ] Screen shows: large image, title, publisher, full description, and genre
-- [ ] Make API call to fetch the podcast with episodes
-- [ ] Display the last 5 episodes showing: title, publish date, duration
-- [ ] Include back button in AppBar that returns to search
-- [ ] Show skeleton/shimmer loading while fetching details
-- [ ] Show error state with retry button if request fails
+- [x] Tapping a podcast navigates to detail screen
+- [x] Screen shows: large image, title, publisher, full description, and genre
+- [x] Make API call to fetch the podcast with episodes
+- [x] Display the last 5 episodes showing: title, publish date, duration
+- [x] Include back button in AppBar that returns to search
+- [x] Show skeleton/shimmer loading while fetching details
+- [x] Show error state with retry button if request fails
 
 ### Technical Resources
 
@@ -126,21 +126,21 @@ When a user taps on a podcast, they should see detailed information and the late
 
 Here's how you might break this down:
 
-- [ ] Create `EpisodeModel` with `@JsonSerializable()`
-- [ ] Create `PodcastDetailModel` with episodes list
-- [ ] Run `build_runner` to generate `.g.dart` files
-- [ ] Add `getPodcastById` method to repository
-- [ ] Create `DetailNotifier` with detail states
-- [ ] Create `detailNotifierProvider`
-- [ ] Create `PodcastDetailScreen` widget
-- [ ] Add route to `app_router.dart`
-- [ ] Implement navigation from `HomeScreen` with podcast ID
-- [ ] Create `EpisodeListTile` widget
-- [ ] Add shimmer loading state using `shimmer` package
-- [ ] Implement error state with retry button
-- [ ] Add date formatter utility
-- [ ] Add duration formatter utility
-- [ ] Add tests for `DetailNotifier`
+- [x] Create `EpisodeModel` with `@JsonSerializable()`
+- [x] Create `PodcastDetailModel` with episodes list
+- [x] Run `build_runner` to generate `.g.dart` files
+- [x] Add `getPodcastById` method to repository
+- [x] Create `DetailNotifier` with detail states
+- [x] Create `detailNotifierProvider`
+- [x] Create `PodcastDetailScreen` widget
+- [x] Add route to `app_router.dart`
+- [x] Implement navigation from `HomeScreen` with podcast ID
+- [x] Create `EpisodeListTile` widget
+- [x] Add shimmer loading state using `shimmer` package
+- [x] Implement error state with retry button
+- [x] Add date formatter utility
+- [x] Add duration formatter utility
+- [x] Add tests for `DetailNotifier`
 
 ### Models Example
 ```dart
@@ -150,13 +150,13 @@ class EpisodeModel {
   final String id;
   final String title;
   final String? description;
-  
+
   @JsonKey(name: 'pub_date_ms')
   final int publishDateMs;
-  
+
   @JsonKey(name: 'audio_length_sec')
   final int audioLengthSec;
-  
+
   const EpisodeModel({
     required this.id,
     required this.title,
@@ -164,7 +164,7 @@ class EpisodeModel {
     required this.publishDateMs,
     required this.audioLengthSec,
   });
-  
+
   factory EpisodeModel.fromJson(Map<String, dynamic> json) =>
       _$EpisodeModelFromJson(json);
 }
@@ -177,12 +177,12 @@ class PodcastDetailModel {
   final String publisher;
   final String? image;
   final String? description;
-  
+
   @JsonKey(name: 'genre_ids')
   final List<int>? genreIds;
-  
+
   final List<EpisodeModel> episodes;
-  
+
   // ... constructors and methods
 }
 ```
@@ -195,12 +195,12 @@ class PodcastDetailModel {
 
 Your subtasks should be **granular and actionable**. Good examples:
 
-✅ "Create PodcastRepository with searchPodcasts method"  
-✅ "Implement debounced search using Debouncer utility"  
+✅ "Create PodcastRepository with searchPodcasts method"
+✅ "Implement debounced search using Debouncer utility"
 ✅ "Add error handling for network timeouts"
 
-❌ "Do the search feature"  
-❌ "Fix stuff"  
+❌ "Do the search feature"
+❌ "Fix stuff"
 ❌ "Make it work"
 
 ### Prioritization
@@ -217,12 +217,12 @@ If running short on time, prioritize:
 
 Make frequent, descriptive commits:
 
-✅ "Add PodcastRepository with search method"  
-✅ "Implement debounced search in HomeScreen"  
+✅ "Add PodcastRepository with search method"
+✅ "Implement debounced search in HomeScreen"
 ✅ "Add loading and error states to search"
 
-❌ "Changes"  
-❌ "WIP"  
+❌ "Changes"
+❌ "WIP"
 ❌ "Update code"
 
 ### Using AI

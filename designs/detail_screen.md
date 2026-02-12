@@ -14,7 +14,7 @@
 ### Content Section (Scrollable)
 
 #### Title & Publisher
-- **Title**: 
+- **Title**:
   - Font size: 24px
   - Weight: Bold (700)
   - Color: #212529
